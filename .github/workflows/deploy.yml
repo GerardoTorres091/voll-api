@@ -36,6 +36,11 @@ jobs:
         run: |
           ssh -i ~/.ssh/deploy_key ec2-user@${{ secrets.EC2_HOST }} << 'EOF'
             pkill -f 'java -jar' || true
-            nohup java -jar ~/deploy/*.jar > ~/deploy/log.txt 2>&1 &
+            nohup java \
+              -Dspring.datasource.url=$DATASOURCE_URL \
+              -Dspring.datasource.username=$DATASOURCE_USERNAME \
+              -Dspring.datasource.password=$DATASOURCE_PASSWORD \
+              -Dapi.security.secret=$JWT_SECRET \
+              -jar ~/deploy/*.jar > ~/deploy/log.txt 2>&1 &
             exit 0
           EOF
