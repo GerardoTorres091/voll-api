@@ -21,7 +21,7 @@ jobs:
       - name: Build app
         run: mvn clean package -DskipTests
 
-      - name: Copy JAR to EC2
+      - name: Copy files to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -30,18 +30,22 @@ jobs:
           source: "target/*.jar"
           target: "~/deploy"
 
-      - name: SSH & Restart App on EC2
+      - name: Kill previous process on EC2
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          script_stop: false
           script: |
-            echo "🔁 Matando instancia anterior (si existe)..."
+            echo "🔁 Matando instancia anterior..."
             pkill -f 'java -jar' || true
 
+      - name: Start new process on EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
             echo "🚀 Iniciando nueva instancia..."
             nohup java -jar ~/deploy/*.jar > ~/deploy/log.txt 2>&1 &
-
-            echo "✅ Despliegue terminado"
