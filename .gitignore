@@ -50,5 +50,4 @@ HELP.md
 
 # Spring Boot application config
 src/main/resources/application.properties
-src/main/resources/application-prod.properties
 src/main/resources/application-test.properties
