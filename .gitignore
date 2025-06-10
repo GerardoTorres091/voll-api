@@ -1,0 +1,54 @@
+# Build output
+/target/
+build/
+
+# Maven wrapper
+.mvn/
+!/.mvn/wrapper/maven-wrapper.jar
+mvnw
+mvnw.cmd
+
+# IDEs
+## IntelliJ
+.idea/
+*.iml
+*.iws
+
+## Eclipse / STS
+.classpath
+.project
+.settings/
+.apt_generated/
+.factorypath
+.springBeans
+.sts4-cache/
+
+## NetBeans
+nbproject/private/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+## VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+
+# Help / docs
+HELP.md
+
+# Spring Boot application config
+src/main/resources/application.properties
+src/main/resources/application-prod.properties
+src/main/resources/application-test.properties
