@@ -33,14 +33,19 @@ jobs:
           scp -i ~/.ssh/deploy_key target/*.jar ec2-user@${{ secrets.EC2_HOST }}:~/deploy/
 
       - name: Restart app on EC2
-        run: |
-          ssh -i ~/.ssh/deploy_key ec2-user@${{ secrets.EC2_HOST }} << 'EOF'
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          envs: DATASOURCE_URL,DATASOURCE_USERNAME,DATASOURCE_PASSWORD,JWT_SECRET
+          script: |
+            echo "🔁 Matando instancia anterior (si existe)..."
             pkill -f 'java -jar' || true
+            echo "🚀 Iniciando nueva instancia..."
             nohup java \
-              -Dspring.datasource.url=$DATASOURCE_URL \
-              -Dspring.datasource.username=$DATASOURCE_USERNAME \
-              -Dspring.datasource.password=$DATASOURCE_PASSWORD \
-              -Dapi.security.secret=$JWT_SECRET \
+              -Dspring.datasource.url="$DATASOURCE_URL" \
+              -Dspring.datasource.username="$DATASOURCE_USERNAME" \
+              -Dspring.datasource.password="$DATASOURCE_PASSWORD" \
+              -Dapi.security.secret="$JWT_SECRET" \
               -jar ~/deploy/*.jar > ~/deploy/log.txt 2>&1 &
-            exit 0
-          EOF
